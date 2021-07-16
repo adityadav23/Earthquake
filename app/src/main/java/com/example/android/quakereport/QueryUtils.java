@@ -63,7 +63,7 @@ import java.util.ArrayList;
                         JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
                         JSONObject properties = currentEarthquake.getJSONObject("properties");
 
-                        String magnitude = properties.getString("mag");
+                        double magnitude = properties.getDouble("mag");
                         String location = properties.getString("place");
                         long time = properties.getLong("time");
 

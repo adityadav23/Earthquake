@@ -4,11 +4,11 @@ public class Earthquake {
 
     private  String mLocation;
     private long mMiliseconds;
-    private String mMagnitude;
+    private double mMagnitude;
 
     //Constructor function
 
-    public Earthquake(String mLocation, long mMiliseconds, String mMagnitude) {
+    public Earthquake(String mLocation, long mMiliseconds, double mMagnitude) {
         this.mLocation = mLocation;
         this.mMiliseconds = mMiliseconds;
         this.mMagnitude = mMagnitude;
@@ -25,7 +25,7 @@ public class Earthquake {
         return mMiliseconds;
     }
 
-    public String getmMagnitude() {
+    public double getmMagnitude() {
         return mMagnitude;
     }
 }
