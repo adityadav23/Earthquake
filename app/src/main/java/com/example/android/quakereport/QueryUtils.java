@@ -65,7 +65,7 @@ import java.util.ArrayList;
 
                         String magnitude = properties.getString("mag");
                         String location = properties.getString("place");
-                        String time = properties.getString("time");
+                        long time = properties.getLong("time");
 
                         Earthquake earthquake = new Earthquake(location,time,magnitude);
                         earthquakes.add(earthquake);
