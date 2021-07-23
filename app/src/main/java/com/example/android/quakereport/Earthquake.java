@@ -35,19 +35,5 @@ public class Earthquake {
         return mUrl;
     }
 
-    public void setmLocation(String mLocation) {
-        this.mLocation = mLocation;
-    }
 
-    public void setmMiliseconds(long mMiliseconds) {
-        this.mMiliseconds = mMiliseconds;
-    }
-
-    public void setmMagnitude(double mMagnitude) {
-        this.mMagnitude = mMagnitude;
-    }
-
-    public void setmUrl(String mUrl) {
-        this.mUrl = mUrl;
-    }
 }

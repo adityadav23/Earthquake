@@ -17,6 +17,7 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,9 +30,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+
+
 
 public class EarthquakeActivity extends AppCompatActivity {
 
+
+
+   private static String USGS_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+
+    private EarthquakeAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +50,19 @@ public class EarthquakeActivity extends AppCompatActivity {
 
 
 
-      ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
-
-
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-      final   EarthquakeAdapter adapter = new EarthquakeAdapter(this,  earthquakes);
+                mAdapter = new EarthquakeAdapter(this,  new ArrayList<Earthquake>());
 
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+        earthquakeListView.setAdapter(mAdapter);
 
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+        task.execute(USGS_URL);
 
         // setting setonItemclicklistener in adapter to redirect to webpage
 
@@ -63,7 +71,7 @@ public class EarthquakeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 // Find the current earthquake that was clicked on
-                Earthquake currentEarthquake = adapter.getItem(position);
+                Earthquake currentEarthquake = mAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
                 Uri earthquakeUri = Uri.parse(currentEarthquake.getmUrl());
@@ -78,5 +86,30 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    private class EarthquakeAsyncTask extends AsyncTask<String , Void , ArrayList<Earthquake>>{
+
+        @Override
+        protected ArrayList<Earthquake> doInBackground(String... urls) {
+
+            if(urls.length<1 || urls[0]==null){
+                return null;
+
+            }
+
+            ArrayList<Earthquake> result = QueryUtils.fetchEarthquakeData(urls[0]);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Earthquake> result) {
+
+            mAdapter.clear();
+            if(result!=null && !result.isEmpty()){
+                mAdapter.addAll(result);
+            }
+        }
     }
 }
