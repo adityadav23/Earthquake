@@ -36,7 +36,9 @@ import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-
+    /*
+        Url of usgs website to fetch data
+     */
 
    private static String USGS_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
@@ -54,17 +56,19 @@ public class EarthquakeActivity extends AppCompatActivity {
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-                mAdapter = new EarthquakeAdapter(this,  new ArrayList<Earthquake>());
+        mAdapter = new EarthquakeAdapter(this,  new ArrayList<Earthquake>());
 
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
 
+
+        //initiating AsyncTask using URL
         EarthquakeAsyncTask task = new EarthquakeAsyncTask();
         task.execute(USGS_URL);
 
-        // setting setonItemclicklistener in adapter to redirect to webpage
+        // setting setOnItemClickListener in adapter to redirect to webpage
 
         earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -87,22 +91,34 @@ public class EarthquakeActivity extends AppCompatActivity {
         });
 
     }
+            /*
+                An inner class to run background thread using asynctask which has 3 generic parameters
 
+             */
 
     private class EarthquakeAsyncTask extends AsyncTask<String , Void , ArrayList<Earthquake>>{
 
+        //Implementing abstract method
         @Override
         protected ArrayList<Earthquake> doInBackground(String... urls) {
 
-            if(urls.length<1 || urls[0]==null){
-                return null;
+            //Check if any urls are passed and not null
 
+            if(urls.length<1 || urls[0]==null){
+
+                return null;
             }
+
+            // this list calls the static method of QueryUtils class to make connection and get desired
+            // earthquakes as per the parameters
 
             ArrayList<Earthquake> result = QueryUtils.fetchEarthquakeData(urls[0]);
             return result;
         }
 
+        /*
+            this is used to update the ui on main thread
+         */
         @Override
         protected void onPostExecute(ArrayList<Earthquake> result) {
 

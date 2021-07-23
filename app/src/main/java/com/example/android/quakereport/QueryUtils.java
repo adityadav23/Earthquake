@@ -29,18 +29,40 @@ import javax.net.ssl.HttpsURLConnection;
          * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
          */
 
-        private static  final String LOG_TAG = QueryUtils.class.getSimpleName();
+        /** A log tag to dispay log messages
+         *
+         */
+    private static  final String LOG_TAG = QueryUtils.class.getSimpleName();
+
+            /*
+              An empty contructor is made so that no instance could be created of this class
+             */
         private QueryUtils() {
         }
 
-        public static ArrayList<Earthquake> fetchEarthquakeData(String requestUrl){
+            /** It is public class to return the arraylist to the doInBackground method
+             * It uses all the helper method to get the arraylist
+             *
+             * @param requestUrl
+             * @return
+             */
+    public static ArrayList<Earthquake> fetchEarthquakeData(String requestUrl){
+
+        // Creating a Url object
             URL url = createUrl(requestUrl);
+
+            // It returns the json from the url we have provided above
+            // by making https connection and buffereading the data
             String jsonResponse =null;
             try {
                 jsonResponse= makeHttpsRequest(url);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "problem in  http request");
             }
+
+            /*
+                It extracts the required data as per the query from jsonResponse
+             */
             ArrayList<Earthquake> earthquakes = extractFeaturesFromJson(jsonResponse);
 
             return earthquakes;
@@ -53,6 +75,8 @@ import javax.net.ssl.HttpsURLConnection;
          */
         private static ArrayList<Earthquake> extractFeaturesFromJson(String earthquakeJson) {
 
+            // if the jsonResponse passed is empty return null
+
             if(TextUtils.isEmpty(earthquakeJson)){
                 return null;
             }
@@ -60,20 +84,17 @@ import javax.net.ssl.HttpsURLConnection;
             // Create an empty ArrayList that we can start adding earthquakes to
             ArrayList<Earthquake> earthquakes = new ArrayList<>();
 
-            // Try to parse the SAMPLE_JSON_RESPONSE. If there's a problem with the way the JSON
-            // is formatted, a JSONException exception object will be thrown.
-            // Catch the exception so the app doesn't crash, and print the error message to the logs.
+            /**
+             * Parsing the jsonResponse as per the requirement
+             * And adding to the the earthquakes ArrayList
+             */
 
-                // TODO: Parse the response given by the SAMPLE_JSON_RESPONSE string and
+            try {
 
-                // build up a list of Earthquake objects with the corresponding data.
-
-
-
-                try {
+                //parsing rootJsonObject
 
                     JSONObject baseJsonResponse = new JSONObject(earthquakeJson);
-
+                //Parsing JsonArray
                     JSONArray earthquakeArray = baseJsonResponse.getJSONArray("features");
 
                     //Iteration
@@ -81,10 +102,14 @@ import javax.net.ssl.HttpsURLConnection;
                         JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
                         JSONObject properties = currentEarthquake.getJSONObject("properties");
 
+                        //getting values in the variables
+
                         double magnitude = properties.getDouble("mag");
                         String location = properties.getString("place");
                         long time = properties.getLong("time");
                         String url = properties.getString("url");
+
+                        //Adding values to earthquake arrayList
 
                         earthquakes.add(new Earthquake(location,time,magnitude,url));
 
@@ -98,10 +123,17 @@ import javax.net.ssl.HttpsURLConnection;
                 Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
             }
 
-            // Return the list of earthquakes
+            // Return the Arraylist  earthquakes
             return earthquakes;
         }
 
+
+
+        /*
+            Helper method to convert string into url object
+            Declaring static so that it could be used outside class without creating instance
+            of this class QueryUtils
+         */
 
 
 
@@ -114,28 +146,51 @@ import javax.net.ssl.HttpsURLConnection;
             }
             return url;
         }
-        /*Declaring static so that it could be used outside class without creating instance
-         of this class QueryUtils
 
+        /**
+
+         Helper method to make HttpsConnection from the url object passed and returning the string of json response
+         Declaring static so that it could be used outside class without creating instance
+         of this class QueryUtils
 
          */
         private static String makeHttpsRequest(URL url) throws IOException{
 
             String jsonResponse = "";
+
+            // Check if url is null, then return empty json response
+
             if(url==null){
                 return jsonResponse;
             }
+            //Initializing HttpsConnection and InputStream
 
             HttpsURLConnection urlConnection= null;
             InputStream  stream = null;
+
+
             try {
+                //using openConnection to get httpsConnection object
                 urlConnection =(HttpsURLConnection) url.openConnection();
+
                 urlConnection.setReadTimeout(10000);
                 urlConnection.setConnectTimeout(15000);
+
+                //Setting the request method we want to use
                 urlConnection.setRequestMethod("GET");
+                //Making the final connection
                 urlConnection.connect();
+                /*
+                    Check if the connection was successful then retrieve jsonResponse
+                   from the inputstream
+                 */
+
                 if(urlConnection.getResponseCode()==200) {
+
+                    //getting the  inputstream
                     stream = urlConnection.getInputStream();
+
+                    //using function to get the string of jsonResponse
                     jsonResponse = readFromStream(stream);
                 }else{
                     Log.e(LOG_TAG, "error in makehttpsrequest"+ urlConnection.getResponseCode());
@@ -144,6 +199,10 @@ import javax.net.ssl.HttpsURLConnection;
             } catch (IOException e) {
                 Log.e(LOG_TAG, "problem receiving json earthquake json result");
             }
+            /**
+             *  Finally disconnecting the urlConnection and input stream after fetching the
+             *  json Response
+             */
             finally{
                 if(urlConnection!=null){
                     urlConnection.disconnect();
@@ -153,9 +212,14 @@ import javax.net.ssl.HttpsURLConnection;
                 }
 
             }
+            // return the String jsonResponse
             return jsonResponse;
 
         }
+
+        /*
+            Converting the bytecode into human readable form using inputStreamreader
+         */
         private static String readFromStream(InputStream stream) throws IOException {
 
             StringBuilder strBuilder= new StringBuilder();
