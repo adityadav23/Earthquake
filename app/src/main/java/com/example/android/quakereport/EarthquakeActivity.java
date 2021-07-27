@@ -19,18 +19,12 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
-
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-
-
 import java.util.ArrayList;
-
 
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
@@ -43,6 +37,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     private EarthquakeAdapter mAdapter;
 
+    // Earthquake Loader id
     private static final int EARTHQUAKE_LOADER_ID = 1;
 
     @Override
@@ -86,14 +81,22 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         });
 
 
+        /**
+         * getting reference of loaderManager
+         * then using initLoader function to initialize loader of given id
+         */
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
 
     }
 
 
-
-
+    /**
+     * creates a loader if not found using EarthquakeLoader class
+     * @param id
+     * @param bundle
+     * @return
+     */
 
     @Override
     public Loader<ArrayList<Earthquake>> onCreateLoader(int id, Bundle bundle) {
@@ -102,24 +105,29 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     }
 
+
+
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
 
+        // cLears previous loaded data
         mAdapter.clear();
+        // checks if the arraylist is not empty and null
+        //then adds all the arraylist entries to the adapter passed
         if(data!=null && !data.isEmpty()){
             mAdapter.addAll(data);
         }
 
     }
-            /*
-                An inner class to run background thread using asynctask which has 3 generic parameters
 
-             */
-
+        /** Resets the loader
+         *
+         * @param loader
+         */
            @Override
-    public void onLoaderReset(Loader<ArrayList<Earthquake>> loader) {
+          public void onLoaderReset(Loader<ArrayList<Earthquake>> loader) {
 
                mAdapter.clear();
-    }
+            }
 
 }

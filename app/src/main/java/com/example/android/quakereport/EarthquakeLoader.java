@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 public class EarthquakeLoader extends AsyncTaskLoader<ArrayList<Earthquake>> {
 
+    /**
+     * Declararing global variable for url
+     * Define constructor to take context and string url
+
+     */
     private final String mUrl;
    public EarthquakeLoader(Context context , String url){
        super(context);
@@ -14,11 +19,21 @@ public class EarthquakeLoader extends AsyncTaskLoader<ArrayList<Earthquake>> {
    }
 
 
+    /**
+     * calling foceLoad method to startloading
+     */
     @Override
     protected void onStartLoading() {
         forceLoad();
     }
 
+
+    /**
+     * Similar to doInBackground
+     * check if url is not null
+     * get the arraylist of earthquakes Using class QueryUtils
+     * @return
+     */
     @Override
     public ArrayList<Earthquake> loadInBackground() {
 
