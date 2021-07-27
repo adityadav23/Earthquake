@@ -15,9 +15,11 @@
  */
 package com.example.android.quakereport;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,24 +27,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
 
     /*
         Url of usgs website to fetch data
      */
 
-   private static String USGS_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+   private static final String USGS_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
     private EarthquakeAdapter mAdapter;
+
+    private static final int EARTHQUAKE_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +51,17 @@ public class EarthquakeActivity extends AppCompatActivity {
         setContentView(R.layout.earthquake_activity);
 
 
-
-
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        ListView earthquakeListView =  findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-        mAdapter = new EarthquakeAdapter(this,  new ArrayList<Earthquake>());
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<>());
 
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
 
-
-        //initiating AsyncTask using URL
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute(USGS_URL);
 
         // setting setOnItemClickListener in adapter to redirect to webpage
 
@@ -90,42 +85,41 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
+
+        LoaderManager loaderManager = getLoaderManager();
+        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+
+    }
+
+
+
+
+
+    @Override
+    public Loader<ArrayList<Earthquake>> onCreateLoader(int id, Bundle bundle) {
+
+        return new EarthquakeLoader(this, USGS_URL);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
+
+        mAdapter.clear();
+        if(data!=null && !data.isEmpty()){
+            mAdapter.addAll(data);
+        }
+
     }
             /*
                 An inner class to run background thread using asynctask which has 3 generic parameters
 
              */
 
-    private class EarthquakeAsyncTask extends AsyncTask<String , Void , ArrayList<Earthquake>>{
+           @Override
+    public void onLoaderReset(Loader<ArrayList<Earthquake>> loader) {
 
-        //Implementing abstract method
-        @Override
-        protected ArrayList<Earthquake> doInBackground(String... urls) {
-
-            //Check if any urls are passed and not null
-
-            if(urls.length<1 || urls[0]==null){
-
-                return null;
-            }
-
-            // this list calls the static method of QueryUtils class to make connection and get desired
-            // earthquakes as per the parameters
-
-            ArrayList<Earthquake> result = QueryUtils.fetchEarthquakeData(urls[0]);
-            return result;
-        }
-
-        /*
-            this is used to update the ui on main thread
-         */
-        @Override
-        protected void onPostExecute(ArrayList<Earthquake> result) {
-
-            mAdapter.clear();
-            if(result!=null && !result.isEmpty()){
-                mAdapter.addAll(result);
-            }
-        }
+               mAdapter.clear();
     }
+
 }
