@@ -61,11 +61,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Create a new {@link ArrayAdapter} of earthquakes
         mAdapter = new EarthquakeAdapter(this, new ArrayList<>());
 
-
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(mAdapter);
-
 
         // setting setOnItemClickListener in adapter to redirect to webpage
 
@@ -84,12 +82,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
-
-
             }
         });
-
-
         /**
          * getting reference of loaderManager
          * then using initLoader function to initialize loader of given id
@@ -98,7 +92,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
 
     }
-
 
     /**
      * creates a loader if not found using EarthquakeLoader class
@@ -119,6 +112,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
 
+        // getting refernce and hiding loader after onLoadfinished is called
+        View loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.GONE);
         //show emptytextView after load if no data found
         emptyStateTextView.setText(R.string.no_earthquake);
         // clears previous loaded data
