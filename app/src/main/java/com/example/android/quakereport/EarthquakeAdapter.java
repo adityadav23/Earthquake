@@ -57,6 +57,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         TextView locationOffsetTextView = listItemView.findViewById(R.id.location_offset);
         locationOffsetTextView.setText(locationOffset);
 
+
         Date dateObject = new Date(currentEarthquake.getmMiliseconds());
 
         TextView dateTextView = listItemView.findViewById(R.id.date);
@@ -85,12 +86,6 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         // Set the color on the magnitude circle
         magnitudeCircle.setColor(magnitudeColor);
-
-
-
-
-
-
 
         return listItemView;
     }

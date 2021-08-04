@@ -54,7 +54,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView =  findViewById(R.id.list);
 
-        // referencing emptystate textview
+        // referencing emptyState textview
         emptyStateTextView = findViewById(R.id.emptyTextView);
         //Setting emptyTextview to listview using listview setEmptyView method
         earthquakeListView.setEmptyView(emptyStateTextView);
@@ -84,6 +84,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                 startActivity(websiteIntent);
             }
         });
+
         /**
          * getting reference of loaderManager
          * then using initLoader function to initialize loader of given id
@@ -112,10 +113,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
 
-        // getting refernce and hiding loader after onLoadfinished is called
+        // getting reference and hiding loader after onLoadFinished is called
         View loadingIndicator = findViewById(R.id.loadingIndicator);
         loadingIndicator.setVisibility(View.GONE);
-        //show emptytextView after load if no data found
+        //show emptyTextView after load if no data found
         emptyStateTextView.setText(R.string.no_earthquake);
         // clears previous loaded data
         mAdapter.clear();

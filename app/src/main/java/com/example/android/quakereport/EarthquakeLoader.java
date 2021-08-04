@@ -10,7 +10,6 @@ public class EarthquakeLoader extends AsyncTaskLoader<ArrayList<Earthquake>> {
     /**
      * Declararing global variable for url
      * Define constructor to take context and string url
-
      */
     private final String mUrl;
    public EarthquakeLoader(Context context , String url){
